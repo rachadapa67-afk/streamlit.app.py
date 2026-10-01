@@ -1,4 +1,5 @@
 import streamlit as st
+import matplotlib.pyplot as plt
 
 # ตั้งค่าหน้าเว็บ
 st.set_page_config(
@@ -33,11 +34,11 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("👥 รายชื่อสมาชิกกลุ่ม")
     st.markdown("""
-    1. นางสาว รชดา ปัททุม
-    2. นางสาว บุรัสกร สุดโต
-    3. นาย อนันต์โชคไพฑูรย์ ยืนยง
-    4. นาย ธเนศ เฉลียวยิ่ง
-    5. นางสาว ฐิตินันท์ โซซอง
+    1. น.ส.รชดา ปัททุม
+    2. น.ส.บุศรกร สุดโต
+    3. นายอนันต์โชค ไพฑูรย์ ยืนยง
+    4. นายเนศ เฉลียวยิ่ง
+    5. น.ส.ฐิตินันท์ ไชยอง
     """)
     st.markdown("---")
     st.caption("พัฒนาด้วย Streamlit 🎈")
@@ -48,16 +49,34 @@ st.caption("✨ ระบบเช็กผลรวมทะเบียนร�
 
 st.write("")
 
-# --- ส่วนที่ 1: รับค่าอินพุต ---
+# --- ข้อกำหนดข้อที่ 2: Mathematical Notation (แสดงสูตรคณิตศาสตร์ด้วย st.latex) ---
+with st.expander("📐 สูตรและโมเดลทางคณิตศาสตร์ที่ใช้คำนวณ (Mathematical Notation)"):
+    st.write("การคำนวณผลรวมทะเบียนรถมงคลใช้สมการผลรวมของลำดับตัวเลขและตัวอักษร:")
+    st.latex(r"S_{\text{total}} = \sum_{i=1}^{m} f(c_i) + \sum_{j=1}^{n} d_j")
+    st.write("โดยที่:")
+    st.latex(r"c_i \in \text{หมวดตัวอักษร}, \quad f(c_i) \in \{1, 2, \dots, 9\} \quad (\text{ค่าประจำตัวอักษร})")
+    st.latex(r"d_j \in \{0, 1, \dots, 9\} \quad (\text{ตัวเลข 4 ตัวท้าย})")
+
+st.write("")
+
+# --- ข้อกำหนดข้อที่ 1: Interactive Controls (ใช้ Widgets อย่างน้อย 3 ชนิด) ---
 with st.container(border=True):
     st.subheader("1️⃣ กรอกข้อมูลทะเบียนรถ")
     
     col1, col2 = st.columns(2)
     with col1:
+        # Widget ชนิดที่ 1: st.text_input
         letters = st.text_input("🔤 หมวดตัวอักษร", value="ผอ", max_chars=3, help="เช่น ผอ, 1กข, กท")
     with col2:
+        # Widget ชนิดที่ 2: st.text_input
         digits = st.text_input("🔢 ตัวเลข 4 ตัวท้าย", value="8930", max_chars=4, help="เช่น 8930, 1234")
     
+    # Widget ชนิดที่ 3: st.selectbox (สำหรับเลือกประเภทรถ)
+    car_type = st.selectbox("🚘 ประเภทการใช้งานรถ", ["รถยนต์ส่วนบุคคล", "รถรับจ้าง / เชิงพาณิชย์", "รถจักรยานยนต์"])
+    
+    # Widget ชนิดที่ 4: st.slider (สำหรับเลือกปีประเมินดวง)
+    forecast_year = st.slider("📅 เลือกปีที่ต้องการประเมินดวงชะตา", 2024, 2030, 2026)
+
     analyze_btn = st.button("🔮 วิเคราะห์ทะเบียนรถ", type="primary", use_container_width=True)
 
 if analyze_btn:
@@ -80,9 +99,9 @@ if analyze_btn:
 
         st.write("")
 
-        # --- ส่วนที่ 2: ขั้นตอนการคำนวณ ---
+        # --- ข้อกำหนดข้อที่ 4: Step-by-Step Calculation (ใช้องค์ประกอบ st.metric & st.dataframe) ---
         with st.container(border=True):
-            st.subheader("2️⃣ ขั้นตอนการคำนวณ")
+            st.subheader("2️⃣ ขั้นตอนการคำนวณและสรุปผล")
             
             digit_str_list = [d for d in clean_digits]
             
@@ -91,11 +110,40 @@ if analyze_btn:
             m2.metric("ผลรวมตัวอักษร", f"{letter_sum}", ", ".join(letter_details))
             m3.metric("ผลรวมทั้งหมด", f"{total_sum}", f"{digit_sum} + {letter_sum}")
 
+            st.write("---")
+            st.write("📋 **ตารางสรุปรายละเอียดการคำนวณ (st.dataframe)**")
+            summary_data = {
+                "รายการ": ["หมวดตัวอักษร", "ตัวเลขท้าย 4 ตัว", "ประเภทรถ", "ปีประเมิน", "ผลรวมทั้งหมด"],
+                "ค่าที่กรอก/คำนวณได้": [clean_letters, clean_digits, car_type, forecast_year, f"{total_sum} คะแนน"]
+            }
+            st.dataframe(summary_data, use_container_width=True)
+
         st.write("")
 
-        # --- ส่วนที่ 3: ผลการทำนาย ---
+        # --- ข้อกำหนดข้อที่ 3: Dynamic Visualization (แสดงกราฟด้วย st.pyplot) ---
         with st.container(border=True):
-            st.subheader("3️⃣ ผลการทำนายและระดับมงคล")
+            st.subheader("3️⃣ กราฟเปรียบเทียบสัดส่วนคะแนน (Dynamic Visualization)")
+            
+            fig, ax = plt.subplots(figsize=(6, 3))
+            categories = ['Sum of Letters', 'Sum of Digits', 'Total Sum']
+            values = [letter_sum, digit_sum, total_sum]
+            colors = ['#ff9999', '#66b3ff', '#99ff99']
+            
+            bars = ax.bar(categories, values, color=colors)
+            ax.set_ylabel('Score')
+            ax.set_title(f'Score Breakdown for License: {clean_letters} {clean_digits}')
+            
+            for bar in bars:
+                yval = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2, yval + 0.5, int(yval), ha='center', va='bottom')
+                
+            st.pyplot(fig)
+
+        st.write("")
+
+        # --- ผลการทำนาย ---
+        with st.container(border=True):
+            st.subheader("4️⃣ ผลการทำนายและระดับมงคล")
             
             if total_sum in GOOD_NUMS:
                 st.success(f"🌟 **ผลรวมได้ {total_sum} : ระดับดีมาก (มงคลยิ่ง)**")
@@ -121,4 +169,3 @@ if analyze_btn:
 # --- Footer ด้านล่าง ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; color: gray;'>Group Nova No. 2 — License Plate Analysis Project</p>", unsafe_allow_html=True)
-
