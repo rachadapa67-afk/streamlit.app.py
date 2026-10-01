@@ -1,6 +1,6 @@
 import streamlit as st
 
-# ตั้งค่าหน้าเว็บแบบกว้างและใส่ธีม
+# ตั้งค่าหน้าเว็บ
 st.set_page_config(
     page_title="วิเคราะห์เลขทะเบียนรถมงคล",
     page_icon="🚘",
@@ -120,4 +120,4 @@ if analyze_btn:
 
 # --- Footer ด้านล่าง ---
 st.markdown("---")
-st.markdown("<p style='text-align: center; color: gray;'>Group Nova No. 2 — License Plate Analysis Project</p>", unsafe_html=True)
+st.markdown("<p style='text-align: center; color: gray;'>Group Nova No. 2 — License Plate Analysis Project</p>", unsafe_allow_html=True)
