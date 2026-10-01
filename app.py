@@ -121,3 +121,4 @@ if analyze_btn:
 # --- Footer ด้านล่าง ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; color: gray;'>Group Nova No. 2 — License Plate Analysis Project</p>", unsafe_allow_html=True)
+
