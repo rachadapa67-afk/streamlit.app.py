@@ -1,5 +1,4 @@
 import streamlit as st
-import matplotlib.pyplot as plt
 
 # ตั้งค่าหน้าเว็บ
 st.set_page_config(
@@ -120,24 +119,15 @@ if analyze_btn:
 
         st.write("")
 
-        # --- ข้อกำหนดข้อที่ 3: Dynamic Visualization (แสดงกราฟด้วย st.pyplot) ---
+        # --- ข้อกำหนดข้อที่ 3: Dynamic Visualization (แสดงกราฟด้วย st.bar_chart) ---
         with st.container(border=True):
             st.subheader("3️⃣ กราฟเปรียบเทียบสัดส่วนคะแนน (Dynamic Visualization)")
-            
-            fig, ax = plt.subplots(figsize=(6, 3))
-            categories = ['Sum of Letters', 'Sum of Digits', 'Total Sum']
-            values = [letter_sum, digit_sum, total_sum]
-            colors = ['#ff9999', '#66b3ff', '#99ff99']
-            
-            bars = ax.bar(categories, values, color=colors)
-            ax.set_ylabel('Score')
-            ax.set_title(f'Score Breakdown for License: {clean_letters} {clean_digits}')
-            
-            for bar in bars:
-                yval = bar.get_height()
-                ax.text(bar.get_x() + bar.get_width()/2, yval + 0.5, int(yval), ha='center', va='bottom')
-                
-            st.pyplot(fig)
+            chart_data = {
+                "คะแนนตัวอักษร": letter_sum,
+                "คะแนนตัวเลข": digit_sum,
+                "ผลรวมทั้งหมด": total_sum
+            }
+            st.bar_chart(chart_data)
 
         st.write("")
 
